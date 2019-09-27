@@ -301,12 +301,14 @@ const TouchpadGestureAction = class{
 
 };
 
+Signals.addSignalMethods(TouchpadGestureAction.prototype);
+
 function enable() {
-    Signals.addSignalMethods(TouchpadGestureAction.prototype);
     gestureHandler = new TouchpadGestureAction(global.stage);
 }
 
 function disable(){
     gestureHandler._cleanup();
+    gestureHandler = null;
 }
 
