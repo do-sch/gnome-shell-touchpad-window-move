@@ -5,9 +5,6 @@ const Signals = imports.signals;
 const GObject = imports.gi.GObject;
 
 const EDGE_THRESHOLD = 48;
-const SETTINGS_SCHEMA = 'org.gnome.mutter.keybindings';
-const SCHEMA_TILE_LEFT = 'toggle-tiled-left';
-const SCHEMA_TILE_RIGHT = 'toggle-tiled-right';
 
 const SnapAction = {
 	NONE: 0,
