@@ -5,6 +5,9 @@ const Signals = imports.signals;
 const GObject = imports.gi.GObject;
 
 const EDGE_THRESHOLD = 48;
+const SETTINGS_SCHEMA = 'org.gnome.mutter.keybindings';
+const SCHEMA_TILE_LEFT = 'toggle-tiled-left';
+const SCHEMA_TILE_RIGHT = 'toggle-tiled-right';
 
 const SnapAction = {
 	NONE: 0,
@@ -235,16 +238,11 @@ const TouchpadGestureAction = class{
     			this._movingMetaWindow.maximize(Meta.MaximizeFlags.BOTH);
     			break;
 		case SnapAction.TILE_LEFT:
-		 	this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Super_L, Clutter.KeyState.PRESSED);
-			this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Left, Clutter.KeyState.PRESSED);
-			this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Left, Clutter.KeyState.RELEASED);
-			this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Super_L, Clutter.KeyState.RELEASED);
+			// TODO: find way to get keybinding from gesttings and convert to Clutter keyvals
+			this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Left]);
 			break;
 		case SnapAction.TILE_RIGHT:
-		 	this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Super_L, Clutter.KeyState.PRESSED);
-			this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Right, Clutter.KeyState.PRESSED);
-			this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Right, Clutter.KeyState.RELEASED);
-			this._virtualKeyboard.notify_keyval(currentTime, Clutter.KEY_Super_L, Clutter.KeyState.RELEASED);		
+			this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Right]);		
 			break;
     	}
     	
@@ -264,6 +262,12 @@ const TouchpadGestureAction = class{
         this._nextSnapAction = SnapAction.NONE;
         
         return Clutter.EVENT_STOP;
+    }
+    
+    // Press key
+    _press_combination(currentTime, combination) {
+    	combination.forEach(key => this._virtualKeyboard.notify_keyval(currentTime, key, Clutter.KeyState.PRESSED));
+    	combination.reverse().forEach(key => this._virtualKeyboard.notify_keyval(currentTime, key, Clutter.KeyState.RELEASED));
     }
     
     // Really not the nicest way but it seems as if there is no API avaliable to test if window ist tiled
