@@ -1,7 +1,6 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 
-
 let gestureHandler = null;
 
 const TouchpadGestureAction = class {
@@ -49,8 +48,13 @@ const TouchpadGestureAction = class {
                 let [dx, dy] = event.get_gesture_motion_delta();
                 return this._gestureUpdate(dx, dy);
 
+<<<<<<< HEAD
                 default: //CANCEL or END
                 global.log(this._counter + ": gesture end");
+=======
+            default: //CANCEL or END
+                global.log("gesture end");
+>>>>>>> 59a83009615692c30eb19283d6b87744683459ee
                 return this._gestureEnd();
         }
 
@@ -101,7 +105,7 @@ const TouchpadGestureAction = class {
 	
 		// Grab has already ended
 		if (this._grabEnd)
-			return Clutter.EVENT_PROPAGATE;
+		    return Clutter.EVENT_PROPAGATE;
 		
 		// Move
 		const [pointerX, pointerY, pointerZ] = global.get_pointer();
