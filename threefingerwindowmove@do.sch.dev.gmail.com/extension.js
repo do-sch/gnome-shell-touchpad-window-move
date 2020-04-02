@@ -89,17 +89,11 @@ const TouchpadGestureAction = class {
 		    pointerX,
 		    pointerY
 	    );
-	    
-	    this._grabEnd = false;
 	
 	    return Clutter.EVENT_STOP;     
     }
     
 	_gestureUpdate(dx, dy) {
-	
-		// Grab has already ended
-		if (this._grabEnd)
-		    return Clutter.EVENT_PROPAGATE;
 		
 		// Move
 		const [pointerX, pointerY, pointerZ] = global.get_pointer();
