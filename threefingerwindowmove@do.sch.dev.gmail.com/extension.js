@@ -47,13 +47,8 @@ const TouchpadGestureAction = class {
                 let [dx, dy] = event.get_gesture_motion_delta();
                 return this._gestureUpdate(dx, dy);
 
-<<<<<<< HEAD
-                default: //CANCEL or END
-                global.log(this._counter + ": gesture end");
-=======
             default: //CANCEL or END
-                global.log("gesture end");
->>>>>>> 59a83009615692c30eb19283d6b87744683459ee
+                global.log(this._counter + ": gesture end");
                 return this._gestureEnd();
         }
 
