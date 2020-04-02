@@ -1,7 +1,5 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
-const Signals = imports.signals;
-const GObject = imports.gi.GObject;
 
 
 let gestureHandler = null;
@@ -13,9 +11,6 @@ const TouchpadGestureAction = class {
         this._grabEnd = true;
     
         this._gestureCallbackID = actor.connect('captured-event', this._handleEvent.bind(this));
-        this._grabOpEndID = global.display.connect('grab-op-end', (function(display, window, grab_op) {
-            this._grabEnd = true;
-        }).bind(this));
 
         if (Clutter.DeviceManager) {
             // Fallback for GNOME 3.32 and 3.34
@@ -31,7 +26,6 @@ const TouchpadGestureAction = class {
     _handleEvent(actor, event) {
     
         this._counter++;
-        log("counter="+this._counter);
 
         // Only look for touchpad swipes
         if (event.type() != Clutter.EventType.TOUCHPAD_SWIPE)
@@ -47,16 +41,16 @@ const TouchpadGestureAction = class {
         switch (event.get_gesture_phase()) {
 
             case Clutter.TouchpadGesturePhase.BEGIN:
-                global.log("gesture begin");
+                global.log(this._counter + ": gesture begin");
                 return this._gestureStarted();
 
             case Clutter.TouchpadGesturePhase.UPDATE:
-                global.log("gesture update");
+                global.log(this._counter + ": gesture update");
                 let [dx, dy] = event.get_gesture_motion_delta();
                 return this._gestureUpdate(dx, dy);
 
                 default: //CANCEL or END
-                global.log("gesture end");
+                global.log(this._counter + ": gesture end");
                 return this._gestureEnd();
         }
 
@@ -118,12 +112,8 @@ const TouchpadGestureAction = class {
     
     _gestureEnd() {
 
-        // Grab has already ended
-        if (this._grabEnd)
-            return Clutter.EVENT_PROPAGATE;
-
         // End grab
-        global.display.end_grab_op();
+        global.display.end_grab_op(global.get_current_time());
 
         return Clutter.EVENT_STOP;
     }
