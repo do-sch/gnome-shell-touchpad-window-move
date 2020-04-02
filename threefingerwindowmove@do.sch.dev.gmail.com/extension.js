@@ -54,7 +54,7 @@ const TouchpadGestureAction = class {
                 let [dx, dy] = event.get_gesture_motion_delta();
                 return this._gestureUpdate(dx, dy);
 
-                default: //CANCEL or END
+            default: //CANCEL or END
                 global.log("gesture end");
                 return this._gestureEnd();
         }
@@ -106,7 +106,7 @@ const TouchpadGestureAction = class {
 	
 		// Grab has already ended
 		if (this._grabEnd)
-			return Clutter.EVENT_PROPAGATE;
+		    return Clutter.EVENT_PROPAGATE;
 		
 		// Move
 		const [pointerX, pointerY, pointerZ] = global.get_pointer();
