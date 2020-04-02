@@ -81,10 +81,15 @@ const TouchpadGestureAction = class{
         const windowClutterActor = global.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, pointerX, pointerY).get_parent();
 
         // Do not reply on gestures, if pointer is not on top of a window
-        if (windowClutterActor.get_meta_window == undefined)
-            return Clutter.EVENT_PROPAGATE;
-
+        if (!windowClutterActor.get_meta_window) {        
+                return Clutter.EVENT_PROPAGATE;
+        }
+        
         this._movingMetaWindow = windowClutterActor.get_meta_window();
+        // take window below, if it is attached  
+        if (this._movingMetaWindow.is_attached_dialog())
+            this._movingMetaWindow = this._movingMetaWindow.get_transient_for();
+
 
         // Don't do anything, if window move is not allowed
         if (!this._movingMetaWindow.allows_move())
