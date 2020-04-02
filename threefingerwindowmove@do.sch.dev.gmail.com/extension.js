@@ -7,7 +7,6 @@ const TouchpadGestureAction = class {
 
     constructor(actor) {    
         this._counter=0;
-        this._grabEnd = true;
     
         this._gestureCallbackID = actor.connect('captured-event', this._handleEvent.bind(this));
 
