@@ -68,42 +68,40 @@ const TouchpadGestureAction = class {
         if (windowClutterActor.get_meta_window == undefined)
             // Allows moving attached windows
             windowClutterActor = windowClutterActor.get_parent();
-		if (windowClutterActor.get_meta_window == undefined)
-        		return Clutter.EVENT_PROPAGATE;
-        	
-	    let movingMetaWindow = windowClutterActor.get_meta_window();
-	    
-	    // Don't do anything, if window move is not allowed
-	    if (!movingMetaWindow.allows_move())
-		    return Clutter.EVENT_PROPAGATE;
+        if (windowClutterActor.get_meta_window == undefined)
+                return Clutter.EVENT_PROPAGATE;
+            
+        let movingMetaWindow = windowClutterActor.get_meta_window();
+        
+        // Don't do anything, if window move is not allowed
+        if (!movingMetaWindow.allows_move())
+            return Clutter.EVENT_PROPAGATE;
 
-	    // Start grab
-	    global.display.begin_grab_op(
-		    movingMetaWindow,
-		    Meta.GrabOp.MOVING,
-		    false,
-		    false,
-		    1,
-		    0,
-		    global.get_current_time(),
-		    pointerX,
-		    pointerY
-	    );
-	
-	    return Clutter.EVENT_STOP;     
+        // Start grab
+        global.display.begin_grab_op(
+            movingMetaWindow,
+            Meta.GrabOp.MOVING,
+            false,
+            false,
+            1,
+            0,
+            global.get_current_time(),
+            pointerX,
+            pointerY
+        );
+    
+        return Clutter.EVENT_STOP;     
     }
     
-	_gestureUpdate(dx, dy) {
-		
-		// Move
-		const [pointerX, pointerY, pointerZ] = global.get_pointer();
-		this._virtualTouchpad.notify_relative_motion(global.get_current_time(), dx, dy);  
-		
-		return Clutter.EVENT_STOP;
+    _gestureUpdate(dx, dy) {
+        // Move
+        const [pointerX, pointerY, pointerZ] = global.get_pointer();
+        this._virtualTouchpad.notify_relative_motion(global.get_current_time(), dx, dy);  
+
+    return Clutter.EVENT_STOP;
     }
     
     _gestureEnd() {
-
         // End grab
         global.display.end_grab_op(global.get_current_time());
 
