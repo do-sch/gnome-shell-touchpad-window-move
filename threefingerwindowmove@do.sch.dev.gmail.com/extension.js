@@ -1,7 +1,7 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
-const Lang = imports.lang;
 const Signals = imports.signals;
+const GObject = imports.gi.GObject;
 
 
 let gestureHandler = null;
@@ -9,9 +9,10 @@ let gestureHandler = null;
 const TouchpadGestureAction = class {
 
     constructor(actor) {    
+        this._counter=0;
         this._grabEnd = true;
     
-        this._gestureCallbackID = actor.connect('captured-event', Lang.bind(this, this._handleEvent));
+        this._gestureCallbackID = actor.connect('captured-event', this._handleEvent.bind(this));
         this._grabOpEndID = global.display.connect('grab-op-end', (function(display, window, grab_op) {
             this._grabEnd = true;
         }).bind(this));
@@ -28,6 +29,9 @@ const TouchpadGestureAction = class {
     }
 
     _handleEvent(actor, event) {
+    
+        this._counter++;
+        log("counter="+this._counter);
 
         // Only look for touchpad swipes
         if (event.type() != Clutter.EventType.TOUCHPAD_SWIPE)
@@ -130,8 +134,6 @@ const TouchpadGestureAction = class {
     }
 
 };
-
-Signals.addSignalMethods(TouchpadGestureAction.prototype);
 
 function enable() {
     gestureHandler = new TouchpadGestureAction(global.stage);
