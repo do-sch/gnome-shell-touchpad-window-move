@@ -181,7 +181,7 @@ const TouchpadGestureAction = class{
         );
 
         // Handle window snap
-        if (!this._movingMetaWindow.can_maximize())
+        if (!this._movingMetaWindow.can_maximize() || !this._movingMetaWindow.has_focus())
             return Clutter.EVENT_STOP;
         if (pointerX < this._monitorGeometry.x + EDGE_THRESHOLD) {
             // Handle snap to left
