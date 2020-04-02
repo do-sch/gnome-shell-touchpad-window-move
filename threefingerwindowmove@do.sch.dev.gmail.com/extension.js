@@ -2,16 +2,7 @@ const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 const Lang = imports.lang;
 const Signals = imports.signals;
-const GObject = imports.gi.GObject;
 
-const EDGE_THRESHOLD = 48;
-
-const SnapAction = {
-	NONE: 0,
-	MAXIMIZE: 1,
-	TILE_LEFT: 2,
-	TILE_RIGHT: 4
-};
 
 let gestureHandler = null;
 
