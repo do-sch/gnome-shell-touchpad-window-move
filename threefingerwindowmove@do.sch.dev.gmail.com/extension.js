@@ -18,18 +18,19 @@ let gestureHandler = null;
 const TouchpadGestureAction = class{
 
     constructor(actor) {
-        this._gestureCallbackID = actor.connect('captured-event', Lang.bind(this, this._handleEvent));
 
         if (Clutter.DeviceManager) {
             // Fallback for GNOME 3.32 and 3.34
             const deviceManager = Clutter.DeviceManager.get_default();
             this._virtualTouchpad = deviceManager.create_virtual_device(Clutter.InputDeviceType.TOUCHPAD_DEVICE);
             this._virtualKeyboard = deviceManager.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
+            this._gestureCallbackID = actor.connect('captured-event', Lang.bind(this, this._handleEvent));
         } else {
             // For GNOME >= 3.36
             const seat = Clutter.get_default_backend().get_default_seat();
             this._virtualTouchpad = seat.create_virtual_device(Clutter.InputDeviceType.POINTER_DEVICE);
             this._virtualKeyboard = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
+            this._gestureCallbackID = actor.connect('captured-event::touchpad', Lang.bind(this, this._handleEvent));
         }
 
         this._monitorGeometry = null;
@@ -93,7 +94,7 @@ const TouchpadGestureAction = class{
 
         // Don't do anything, if window move is not allowed
         if (!this._movingMetaWindow.allows_move())
-            return Clutter.EVENT_PROPAGATE;	
+            return Clutter.EVENT_PROPAGATE;    
 
         // Calculate workspace data
         this._monitorGeometry = this._movingMetaWindow.get_work_area_current_monitor();
@@ -130,7 +131,7 @@ const TouchpadGestureAction = class{
             if (!this._movingMetaWindow.has_focus())
             this._movingMetaWindow.activate(currentTime);
 
-            // Unmaximize		
+            // Unmaximize        
             this._movingMetaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
 
             // Connect to _sizeChanged
@@ -141,11 +142,11 @@ const TouchpadGestureAction = class{
 
                 // Update window-center
                 outerThis._pointerWindowDiffX = -windowSize.width / 2;
-                outerThis._pointerWindowDiffY = -windowSize.height / 2;	
+                outerThis._pointerWindowDiffY = -windowSize.height / 2;    
             });
 
 
-            const frameRect = this._movingMetaWindow.get_frame_rect();	
+            const frameRect = this._movingMetaWindow.get_frame_rect();    
 
             // Can center window to pointer, because window->saved_rect is private in mutter
             this._pointerWindowDiffX = -frameRect.width / 3;
@@ -252,7 +253,7 @@ const TouchpadGestureAction = class{
                 this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Left]);
                 break;
             case SnapAction.TILE_RIGHT:
-                this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Right]);		
+                this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Right]);        
                 break;
         }
 
@@ -300,7 +301,7 @@ const TouchpadGestureAction = class{
             // Other window is not at leftmost position
             if (metaWindowRect.x != this._monitorGeometry.x)
                 return false;
-        }	
+        }    
 
         // Only if window ist vertically maximized return width
         if (metaWindowRect.height === this._monitorGeometry.height && metaWindow.get_maximized() === Meta.MaximizeFlags.VERTICAL)
