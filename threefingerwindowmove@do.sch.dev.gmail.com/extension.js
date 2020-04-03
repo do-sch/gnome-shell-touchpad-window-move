@@ -1,16 +1,15 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
-const Lang = imports.lang;
 const Signals = imports.signals;
 const GObject = imports.gi.GObject;
 
 const EDGE_THRESHOLD = 48;
 
 const SnapAction = {
-NONE: 0,
-MAXIMIZE: 1,
-TILE_LEFT: 2,
-TILE_RIGHT: 4
+    NONE: 0,
+    MAXIMIZE: 1,
+    TILE_LEFT: 2,
+    TILE_RIGHT: 4
 };
 
 let gestureHandler = null;
@@ -82,19 +81,19 @@ const TouchpadGestureAction = class{
         const windowClutterActor = global.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, pointerX, pointerY).get_parent();
 
         // Do not reply on gestures, if pointer is not on top of a window
-        if (!windowClutterActor.get_meta_window) {        
+        if (!windowClutterActor.get_meta_window) {
                 return Clutter.EVENT_PROPAGATE;
         }
-        
+
         this._movingMetaWindow = windowClutterActor.get_meta_window();
-        // take window below, if it is attached  
+        // take window below, if it is attached
         if (this._movingMetaWindow.is_attached_dialog())
             this._movingMetaWindow = this._movingMetaWindow.get_transient_for();
 
 
         // Don't do anything, if window move is not allowed
         if (!this._movingMetaWindow.allows_move())
-            return Clutter.EVENT_PROPAGATE;    
+            return Clutter.EVENT_PROPAGATE;
 
         // Calculate workspace data
         this._monitorGeometry = this._movingMetaWindow.get_work_area_current_monitor();
@@ -131,7 +130,7 @@ const TouchpadGestureAction = class{
             if (!this._movingMetaWindow.has_focus())
             this._movingMetaWindow.activate(currentTime);
 
-            // Unmaximize        
+            // Unmaximize
             this._movingMetaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
 
             // Connect to _sizeChanged
@@ -142,11 +141,11 @@ const TouchpadGestureAction = class{
 
                 // Update window-center
                 outerThis._pointerWindowDiffX = -windowSize.width / 2;
-                outerThis._pointerWindowDiffY = -windowSize.height / 2;    
+                outerThis._pointerWindowDiffY = -windowSize.height / 2;
             });
 
 
-            const frameRect = this._movingMetaWindow.get_frame_rect();    
+            const frameRect = this._movingMetaWindow.get_frame_rect();
 
             // Can center window to pointer, because window->saved_rect is private in mutter
             this._pointerWindowDiffX = -frameRect.width / 3;
@@ -158,7 +157,7 @@ const TouchpadGestureAction = class{
             this._pointerWindowDiffY = frameRect.y - pointerY;
         }
 
-        return Clutter.EVENT_STOP;     
+        return Clutter.EVENT_STOP;
     }
 
     _gestureUpdate(dx, dy) {
@@ -174,10 +173,10 @@ const TouchpadGestureAction = class{
 
         // Move
         const [pointerX, pointerY, pointerZ] = global.get_pointer();
-        this._virtualTouchpad.notify_relative_motion(currentTime, dx, dy);  
+        this._virtualTouchpad.notify_relative_motion(currentTime, dx, dy);
         this._movingMetaWindow.move_frame(
-            true, 
-            pointerX + this._pointerWindowDiffX, 
+            true,
+            pointerX + this._pointerWindowDiffX,
             pointerY + this._pointerWindowDiffY
         );
 
@@ -196,7 +195,7 @@ const TouchpadGestureAction = class{
                 const width = this._windowAtPos(this._monitorGeometry.x + this._monitorGeometry.width - 1, true);
                 if (width)
                     this._previewRect.width = width;
-                else 
+                else
                     this._previewRect.width = this._monitorGeometry.width / 2;
                 global.window_manager.emit("show-tile-preview", this._movingMetaWindow, this._previewRect, this._monitorIndex);
             }
@@ -253,7 +252,7 @@ const TouchpadGestureAction = class{
                 this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Left]);
                 break;
             case SnapAction.TILE_RIGHT:
-                this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Right]);        
+                this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Right]);
                 break;
         }
 
@@ -301,7 +300,7 @@ const TouchpadGestureAction = class{
             // Other window is not at leftmost position
             if (metaWindowRect.x != this._monitorGeometry.x)
                 return false;
-        }    
+        }
 
         // Only if window ist vertically maximized return width
         if (metaWindowRect.height === this._monitorGeometry.height && metaWindow.get_maximized() === Meta.MaximizeFlags.VERTICAL)
@@ -326,4 +325,3 @@ function disable(){
     gestureHandler._cleanup();
     gestureHandler = null;
 }
-
