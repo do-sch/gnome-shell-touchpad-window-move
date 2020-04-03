@@ -1,7 +1,6 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 const Signals = imports.signals;
-const GObject = imports.gi.GObject;
 
 const EDGE_THRESHOLD = 48;
 
