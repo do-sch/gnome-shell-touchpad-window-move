@@ -23,13 +23,13 @@ const TouchpadGestureAction = class{
             const deviceManager = Clutter.DeviceManager.get_default();
             this._virtualTouchpad = deviceManager.create_virtual_device(Clutter.InputDeviceType.TOUCHPAD_DEVICE);
             this._virtualKeyboard = deviceManager.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
-            this._gestureCallbackID = actor.connect('captured-event', Lang.bind(this, this._handleEvent));
+            this._gestureCallbackID = actor.connect('captured-event', this._handleEvent.bind(this));
         } else {
             // For GNOME >= 3.36
             const seat = Clutter.get_default_backend().get_default_seat();
             this._virtualTouchpad = seat.create_virtual_device(Clutter.InputDeviceType.POINTER_DEVICE);
             this._virtualKeyboard = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
-            this._gestureCallbackID = actor.connect('captured-event::touchpad', Lang.bind(this, this._handleEvent));
+            this._gestureCallbackID = actor.connect('captured-event::touchpad', this._handleEvent.bind(this));
         }
 
         this._monitorGeometry = null;
