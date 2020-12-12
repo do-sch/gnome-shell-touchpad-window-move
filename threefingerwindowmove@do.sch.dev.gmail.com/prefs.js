@@ -1,7 +1,5 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const GObject = imports.gi.GObject;
-const Lang = imports.lang;
 const ExtensionUtils = imports.misc.extensionUtils;
 
 let settings = null;
