@@ -5,19 +5,19 @@
   <schema id="org.gnome.shell.extensions.threefingerwindowmove" path="/org/gnome/shell/extensions/threefingerwindowmove/">
 
     <key name="acceleration" type="d">
-      <default>1</default>
+      <default>1.2</default>
       <summary>Acceleration</summary>
       <description>Factor that is applied to the amount of pixels the window is moved</description>
     </key>
     
     <key name="threshold" type="i">
-      <default>100</default>
+      <default>40</default>
       <summary>Threshold</summary>
       <description>Amount of pixels the fingers have to be moved first until window move begins</description>
     </key>
     
     <key name="summarize-threshold" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Summarize threshold move</summary>
       <description>Include pixels before threshold was exceeded</description>
     </key>
