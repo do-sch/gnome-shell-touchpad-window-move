@@ -56,8 +56,8 @@ const TouchpadGestureAction = class{
     _updateSettings() {
         this._acceleration = this._settings.get_double('acceleration');
         this._thresholdSquare = this._settings.get_int('threshold');
-        this._thresholdSquare *= thresholdSquare;
-        this._summarizeThreshold = this._settings.get_bool('summarize-threshold');
+        this._thresholdSquare *= this._thresholdSquare;
+        this._summarizeThreshold = this._settings.get_boolean('summarize-threshold');
     }
 
     _handleEvent(actor, event) {
@@ -186,6 +186,10 @@ const TouchpadGestureAction = class{
         const currentTime = global.get_current_time();
         if (!this._movingMetaWindow.has_focus())
             this._movingMetaWindow.activate(currentTime);
+        
+        // Apply acceleration
+        dx *= this._acceleration;
+        dy *= this._acceleration;
 
         // Move and apply acceleration if threshold exeeded
         const [pointerX, pointerY, pointerZ] = global.get_pointer();
