@@ -1,6 +1,8 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 const Signals = imports.signals;
+const Lang = imports.lang;
+const ExtensionUtils = imports.misc.extensionUtils;
 
 const EDGE_THRESHOLD = 48;
 
@@ -45,6 +47,17 @@ const TouchpadGestureAction = class{
         this._sizeHandler = null;
         this._unmanagedHandler = null;
         this._workspaceChangedHandler = null;
+      
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.threefingerwindowmove');
+        this._settingsChangedCallbackID = this._settings.connect('changed', Lang.bind(this, this._updateSettings));
+        this._updateSettings();
+    }
+    
+    _updateSettings() {
+        this._acceleration = this._settings.get_double('acceleration');
+        this._thresholdSquare = this._settings.get_int('threshold');
+        this._thresholdSquare *= thresholdSquare;
+        this._summarizeThreshold = this._settings.get_bool('summarize-threshold');
     }
 
     _handleEvent(actor, event) {
@@ -155,6 +168,10 @@ const TouchpadGestureAction = class{
             this._pointerWindowDiffX = frameRect.x - pointerX;
             this._pointerWindowDiffY = frameRect.y - pointerY;
         }
+        
+        this._thresholdExceeded = false;
+        this._moveDeltaX = 0;
+        this._moveDeltaY = 0;
 
         return Clutter.EVENT_STOP;
     }
@@ -170,8 +187,21 @@ const TouchpadGestureAction = class{
         if (!this._movingMetaWindow.has_focus())
             this._movingMetaWindow.activate(currentTime);
 
-        // Move
+        // Move and apply acceleration if threshold exeeded
         const [pointerX, pointerY, pointerZ] = global.get_pointer();
+        if (!this._thresholdExceeded) {
+            this._moveDeltaX += dx;
+            this._moveDeltaY += dy;
+            if (this._moveDeltaX * this._moveDeltaX + this._moveDeltaY * this._moveDeltaY >= this._thresholdSquare) {
+                this._thresholdExceeded = true;
+                if (this._summarizeThreshold) {
+                    dx = this._moveDeltaX;
+                    dy = this._moveDeltaY;
+                }
+            } else {
+                return Clutter.EVENT_STOP;
+            }
+        }
         this._virtualTouchpad.notify_relative_motion(currentTime, dx, dy);
         this._movingMetaWindow.move_frame(
             true,
@@ -247,7 +277,7 @@ const TouchpadGestureAction = class{
                 this._movingMetaWindow.maximize(Meta.MaximizeFlags.BOTH);
                 break;
             case SnapAction.TILE_LEFT:
-                // TODO: find way to get keybinding from gesttings and convert to Clutter keyvals
+                // TODO: find way to get keybinding from gSettings and convert to Clutter keyvals
                 this._press_combination(currentTime, [Clutter.KEY_Super_L, Clutter.KEY_Left]);
                 break;
             case SnapAction.TILE_RIGHT:
@@ -310,6 +340,7 @@ const TouchpadGestureAction = class{
 
     _cleanup() {
         global.stage.disconnect(this._gestureCallbackID);
+        global.stage.disconnect(this._settingsChangedCallbackID);
     }
 
 };
