@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+  
+<schemalist gettext-domain="gnome-shell-extensions">
+
+  <schema id="org.gnome.shell.extensions.threefingerwindowmove" path="/org/gnome/shell/extensions/threefingerwindowmove/">
+
+    <key name="acceleration" type="d">
+      <default>1</default>
+      <summary>Acceleration</summary>
+      <description>Factor that is applied to the amount of pixels the window is moved</description>
+    </key>
+    
+    <key name="threshold" type="i">
+      <default>100</default>
+      <summary>Threshold</summary>
+      <description>Amount of pixels the fingers have to be moved first until window move begins</description>
+    </key>  
+
+  </schema>
+
+  
+</schemalist>
