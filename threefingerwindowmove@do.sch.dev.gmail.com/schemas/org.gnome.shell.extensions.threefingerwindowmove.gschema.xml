@@ -14,7 +14,13 @@
       <default>100</default>
       <summary>Threshold</summary>
       <description>Amount of pixels the fingers have to be moved first until window move begins</description>
-    </key>  
+    </key>
+    
+    <key name="summarize-threshold" type="b">
+      <default>false</default>
+      <summary>Summarize threshold move</summary>
+      <description>Include pixels before threshold was exceeded</description>
+    </key>
 
   </schema>
 

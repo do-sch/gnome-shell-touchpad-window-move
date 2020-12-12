@@ -61,11 +61,24 @@ function buildPrefsWidget() {
     thresholdScale.set_digits(0);
     thresholdScale.expand = true;
     
+    let summarizeLabel = new Gtk.Label({label: "Summarize threshold move"});
+    let summarizeSwitch = new Gtk.Switch();
+    settings.bind(
+        'summarize-threshold',
+        summarizeSwitch,
+        'active',
+        Gio.SettingsBindFlags.DEFAULT
+    );
+    summarizeSwitch.set_valign(Gtk.Align.CENTER);
+    summarizeSwitch.set_halign(Gtk.Align.CENTER);
+    
     // place the widgets
     layout.attach(accelLabel, 0, 0, 1, 1);
     layout.attach(accelScale, 1, 0, 1, 1);
     layout.attach(thresholdLabel, 0, 1, 1, 1);
     layout.attach(thresholdScale, 1, 1, 1, 1);
+    layout.attach(summarizeLabel, 0, 2, 1, 1);
+    layout.attach(summarizeSwitch, 1, 2, 1, 1);
     
     frame.show_all();
     return frame;
