@@ -47,7 +47,7 @@ function buildPrefsWidget() {
     let thresholdLabel = new Gtk.Label({label: "Activation Threshold"});
     let thresholdAdj = new Gtk.Adjustment({
         lower: 0,
-        upper: 1000,
+        upper: 600,
         step_increment: 1,
         page_increment: 1
     });
