@@ -1,0 +1,7 @@
+{
+	"name": "Four Finger Window Move", 
+	"description": "Allows moving windows around with a four finger trackpad gesture (Wayland only)", 
+	"url": "https://github.com/do-sch/gnome-shell-touchpad-window-move",
+	"uuid": "fourfingerwindowmove@do.sch.dev.gmail.com",
+	"shell-version": ["40", "41", "42"]
+}

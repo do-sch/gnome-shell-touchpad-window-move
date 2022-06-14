@@ -1,7 +1,0 @@
-{
-	"name": "Three Finger Window Move", 
-	"description": "Allows moving windows around with a three finger trackpad gesture (Wayland only)", 
-	"url": "https://github.com/do-sch/gnome-shell-touchpad-window-move",
-	"uuid": "threefingerwindowmove@do.sch.dev.gmail.com",
-	"shell-version": ["3.32", "3.34", "3.36", "3.38"]
-}

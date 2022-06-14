@@ -5,7 +5,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 let settings = null;
 
 function init(){
-    settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.threefingerwindowmove');
+    settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.fourfingerwindowmove');
 }
 
 function buildPrefsWidget() {
@@ -21,9 +21,8 @@ function buildPrefsWidget() {
         column_spacing: 20,
         row_homogeneous: true,
         row_spacing: 5,
-        margin: 20
     });
-    frame.add(layout);
+    frame.set_child(layout);
     
     // Widgets
     let accelLabel = new Gtk.Label({label: "Acceleration"});
@@ -72,13 +71,12 @@ function buildPrefsWidget() {
     
     // place the widgets
     layout.attach(accelLabel, 0, 0, 1, 1);
-    layout.attach(accelScale, 1, 0, 1, 1);
+    layout.attach(accelScale, 1, 0, 10, 1);
     layout.attach(thresholdLabel, 0, 1, 1, 1);
-    layout.attach(thresholdScale, 1, 1, 1, 1);
+    layout.attach(thresholdScale, 1, 1, 10, 1);
     layout.attach(summarizeLabel, 0, 2, 1, 1);
     layout.attach(summarizeSwitch, 1, 2, 1, 1);
     
-    frame.show_all();
     return frame;
 }
 

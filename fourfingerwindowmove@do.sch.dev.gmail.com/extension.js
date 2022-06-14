@@ -19,19 +19,10 @@ const TouchpadGestureAction = class{
 
     constructor(actor) {
 
-        if (Clutter.DeviceManager) {
-            // Fallback for GNOME 3.32 and 3.34
-            const deviceManager = Clutter.DeviceManager.get_default();
-            this._virtualTouchpad = deviceManager.create_virtual_device(Clutter.InputDeviceType.TOUCHPAD_DEVICE);
-            this._virtualKeyboard = deviceManager.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
-            this._gestureCallbackID = actor.connect('captured-event', this._handleEvent.bind(this));
-        } else {
-            // For GNOME >= 3.36
-            const seat = Clutter.get_default_backend().get_default_seat();
-            this._virtualTouchpad = seat.create_virtual_device(Clutter.InputDeviceType.POINTER_DEVICE);
-            this._virtualKeyboard = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
-            this._gestureCallbackID = actor.connect('captured-event::touchpad', this._handleEvent.bind(this));
-        }
+        const seat = Clutter.get_default_backend().get_default_seat();
+        this._virtualTouchpad = seat.create_virtual_device(Clutter.InputDeviceType.POINTER_DEVICE);
+        this._virtualKeyboard = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
+        this._gestureCallbackID = actor.connect('captured-event::touchpad', this._handleEvent.bind(this));
 
         this._monitorGeometry = null;
         this._posRect = new Meta.Rectangle({x:0, y:0, width: 1, height: 1});
@@ -48,7 +39,7 @@ const TouchpadGestureAction = class{
         this._unmanagedHandler = null;
         this._workspaceChangedHandler = null;
       
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.threefingerwindowmove');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.fourfingerwindowmove');
         this._settingsChangedCallbackID = this._settings.connect('changed', Lang.bind(this, this._updateSettings));
         this._updateSettings();
     }
@@ -66,8 +57,8 @@ const TouchpadGestureAction = class{
         if (event.type() != Clutter.EventType.TOUCHPAD_SWIPE)
             return Clutter.EVENT_PROPAGATE;
 
-        // Only look for three finger gestures
-        if (event.get_touchpad_gesture_finger_count() != 3)
+        // Only look for four finger gestures
+        if (event.get_touchpad_gesture_finger_count() != 4)
             return Clutter.EVENT_PROPAGATE;
 
         // Handle event
