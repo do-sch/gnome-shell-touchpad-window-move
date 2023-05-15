@@ -90,10 +90,14 @@ const TouchpadGestureAction = class{
     _gestureStarted() {
 
         let [pointerX, pointerY, pointerZ] = global.get_pointer();
-        const windowClutterActor = global.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, pointerX, pointerY).get_parent();
+        let windowClutterActor = global.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, pointerX, pointerY).get_parent();
+
+        if (!windowClutterActor.get_meta_window) {
+            windowClutterActor = windowClutterActor.get_parent();
+        }
 
         // Do not reply on gestures, if pointer is not on top of a window
-        if (!windowClutterActor.get_meta_window) {
+        if (!windowClutterActor || !windowClutterActor.get_meta_window) {
                 return Clutter.EVENT_PROPAGATE;
         }
 
