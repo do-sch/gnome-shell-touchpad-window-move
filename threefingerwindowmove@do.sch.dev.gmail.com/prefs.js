@@ -13,7 +13,10 @@ function buildPrefsWidget() {
     let frame = new Gtk.Frame();
     frame.set_label("Gesture Options");
     frame.set_valign(Gtk.Align.START);
-    frame.margin = 20;
+    frame.set_margin_top(20);
+    frame.set_margin_bottom(20);
+    frame.set_margin_start(20);
+    frame.set_margin_end(20);
 
     // Grid to place all the widgets
     let layout = new Gtk.Grid({
@@ -21,9 +24,12 @@ function buildPrefsWidget() {
         column_spacing: 20,
         row_homogeneous: true,
         row_spacing: 5,
-        margin: 20
+        margin_top: 20,
+        margin_bottom: 20,
+        margin_start: 20,
+        margin_end: 20
     });
-    frame.add(layout);
+    frame.set_child(layout);
     
     // Widgets
     let accelLabel = new Gtk.Label({label: "Acceleration"});
@@ -78,7 +84,7 @@ function buildPrefsWidget() {
     layout.attach(summarizeLabel, 0, 2, 1, 1);
     layout.attach(summarizeSwitch, 1, 2, 1, 1);
     
-    frame.show_all();
+    //frame.show_all();
     return frame;
 }
 
