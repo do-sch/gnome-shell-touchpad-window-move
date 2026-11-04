@@ -23,6 +23,15 @@ const SnapAction = {
 
 let gestureHandler = null;
 
+// Meta.Window.get_maximized() was removed in GNOME 49 (mutter 17) and
+// replaced by get_maximize_flags(); the old method only exists up to
+// GNOME 48. Probe the window so the extension works on GNOME 45 through 51.
+function maximizeFlags(window) {
+    if (typeof window.get_maximize_flags === 'function')
+        return window.get_maximize_flags();
+    return window.get_maximized();
+}
+
 const TouchpadGestureAction = class {
 
     constructor(actor, settings) {
@@ -129,24 +138,30 @@ const TouchpadGestureAction = class {
         });
 
         // Handle maximized window
-        if (this._movingMetaWindow.get_maximized() !== 0) {
+        if (maximizeFlags(this._movingMetaWindow) !== 0) {
             // Activate window
             if (!this._movingMetaWindow.has_focus())
                 this._movingMetaWindow.activate(global.get_current_time());
 
-            // Unmaximize
-            this._movingMetaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
-
-            // Connect to size-changed
-            this._sizeHandler = this._movingMetaWindow.connect('size-changed', () => {
-                this._movingMetaWindow.disconnect(this._sizeHandler);
-                this._sizeHandler = null;
+            // Connect to size-changed before unmaximize() so a synchronous
+            // emission is not missed
+            const handlerID = this._movingMetaWindow.connect('size-changed', () => {
+                if (this._sizeHandler === handlerID) {
+                    this._sizeHandler = null;
+                    this._movingMetaWindow.disconnect(handlerID);
+                }
+                if (this._movingMetaWindow === null)
+                    return;
                 const windowSize = this._movingMetaWindow.get_frame_rect();
 
                 // Update window-center
                 this._pointerWindowDiffX = -windowSize.width / 2;
                 this._pointerWindowDiffY = -windowSize.height / 2;
             });
+            this._sizeHandler = handlerID;
+
+            // Unmaximize
+            this._movingMetaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
 
             // Can center window to pointer, because window->saved_rect is private in mutter
             const frameRect = this._movingMetaWindow.get_frame_rect();
@@ -310,7 +325,7 @@ const TouchpadGestureAction = class {
 
         // Only if window is vertically maximized return width
         if (metaWindowRect.height === this._monitorGeometry.height &&
-            metaWindow.get_maximized() === Meta.MaximizeFlags.VERTICAL)
+            maximizeFlags(metaWindow) === Meta.MaximizeFlags.VERTICAL)
             return this._monitorGeometry.width - metaWindowRect.width;
 
         return false;
