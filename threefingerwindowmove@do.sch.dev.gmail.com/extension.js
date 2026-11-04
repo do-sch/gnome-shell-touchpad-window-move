@@ -103,6 +103,19 @@ const TouchpadGestureAction = class {
     }
 
     _gestureStarted() {
+        // An exception must not leave the drag half-initialized (window
+        // recorded, pointer offset still 0), or every UPDATE would glue the
+        // window corner to the pointer — log and forget the drag instead.
+        try {
+            return this._gestureStartedInner();
+        } catch (e) {
+            log(`threefingerwindowmove: gesture start failed: ${e}`);
+            this._forgetWindow();
+            return Clutter.EVENT_PROPAGATE;
+        }
+    }
+
+    _gestureStartedInner() {
         const [pointerX, pointerY] = global.get_pointer();
         const window = this._windowAtPointer(pointerX, pointerY);
 
@@ -185,6 +198,16 @@ const TouchpadGestureAction = class {
         // Pointer not on top of a window
         if (this._movingMetaWindow === null)
             return Clutter.EVENT_PROPAGATE;
+        try {
+            return this._gestureUpdateInner(dx, dy);
+        } catch (e) {
+            log(`threefingerwindowmove: gesture update failed: ${e}`);
+            this._forgetWindow();
+            return Clutter.EVENT_PROPAGATE;
+        }
+    }
+
+    _gestureUpdateInner(dx, dy) {
 
         // Focus window
         if (!this._movingMetaWindow.has_focus())
@@ -250,7 +273,7 @@ const TouchpadGestureAction = class {
     _press_combination(currentTime, combination) {
         combination.forEach(key =>
             this._virtualKeyboard.notify_keyval(currentTime, key, Clutter.KeyState.PRESSED));
-        combination.reverse().forEach(key =>
+        [...combination].reverse().forEach(key =>
             this._virtualKeyboard.notify_keyval(currentTime, key, Clutter.KeyState.RELEASED));
     }
 
